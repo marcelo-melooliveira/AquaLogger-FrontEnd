@@ -1,8 +1,9 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useState, useRef} from 'react';
 // import { Link } from 'react-router-dom';
 import { Parallax, ParallaxLayer } from 'react-spring/renderprops-addons'
 import {XYPlot,
         LineMarkSeries,
+        AreaSeries,
         VerticalGridLines,
         HorizontalGridLines,
         XAxis,
@@ -15,26 +16,18 @@ import Ws from '@adonisjs/websocket-client';
 import { AiOutlineConsoleSql } from 'react-icons/ai';
 import api from '../../services/api'
 import HeaderBar from '../../components/HeaderBar';
-import { VideoContainer} from './styles';
+import { GraficoContainer, DadosContainer} from './styles';
 import '../../../node_modules/react-vis/dist/style.css';
 
 const ws = Ws('ws://localhost:3333').connect();
 
-
-const dados_fake = [
-  {"y" : 2, "x": 1597694444000},
-  {"y" : 7, "x": 1597695644000},
-	{"y" : 13, "x": 1597696844000},
-	{"y" : 15, "x": 1597698044000},
-  {"y" : 20, "x": 1597699244000},
-	{"y" : 23, "x": 1597700444000}
-]
-
 function HomePage() {
+ 
   const [dataAtual, setdataAtual] = useState(new Date());
   const [dadosPrimarios, setDadosPrimarios] = useState([]);
   const [data_grafico, setDataGrafico] = useState([]);
   const [value, setValue] = useState([]);
+  
   
 
 
@@ -48,7 +41,8 @@ function HomePage() {
         }
          console.log(aux_dados)
       setDataGrafico(aux_dados);
-      setValue(dados[dados.length- 1].consumo)
+      setValue(dados[dados.length- 1].consumo);
+      
     }
   }
 
@@ -110,20 +104,27 @@ function rememberValue (aux_value) {
       <ParallaxLayer
         offset={0}
         speed={0.1}
-        style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <HeaderBar />        
-        <VideoContainer>
-            <h1>{format(new Date(), "dd'/'MM'/'yyyy")}</h1>
-            <h2>Consumo: {value} m³</h2>
-            <XYPlot height={350} width={1100}  margin={{bottom: 45, left: 55}}>
+        style={{ display: 'flex', alignItems: 'center', justifyContent: 'center'}}>
+        <HeaderBar />
+
+        <div style={{display: 'flex', flexDirection: 'column', width: '100%'}}>
+        
+        <DadosContainer>
+          <h1>{format(new Date(), "dd'/'MM'/'yyyy")}</h1>
+          <h2>Consumo: {value} m³</h2>
+        </DadosContainer>   
+
+        <GraficoContainer>
+            <XYPlot height={350} width={(data_grafico.length*20) + 350} margin={{ left:75}} style={{overflowX:'auto'}}>
               <VerticalGridLines />
               <HorizontalGridLines />
              
               <XAxis tickTotal={10} tickFormat={ (d)=>{return format(new Date(d), "HH':'mm")}} tickLabelAngle={-45} />
               <YAxis tickFormat={ (d)=>{ return `${d} m³`}} />
               <LineMarkSeries 
-                className="linemark-series-example" 
+                style={{}}
                 curve='curveLinear' 
+                size={3}
                 data={data_grafico} 
                 onValueMouseOver={(valor)=> rememberValue(valor)}
                 onValueMouseOut={()=> forgetValue()}
@@ -131,7 +132,8 @@ function rememberValue (aux_value) {
               {// value ? <Hint value={value} /> : null
             }
            </XYPlot>
-        </VideoContainer>
+        </GraficoContainer>
+        </div>
       </ParallaxLayer>
   </Parallax>
     

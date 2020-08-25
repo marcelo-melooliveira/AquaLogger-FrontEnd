@@ -14,16 +14,40 @@ export const Container = styled.div`
   }
 `;
 
-export const VideoContainer = styled.div`
+export const DadosContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  align-self: center;
+  background-color: #FFF;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  padding-left: 10px;
+  padding-right: 10px;
+  border-radius: 10px;
+
+  h1 {
+    align-self: center;
+  };
+
+  h2 {
+    align-self: center;
+  }
+
+`;
+
+
+export const GraficoContainer = styled.div`
   display: flex;
   width: 96%;
-  flex-direction: column;
   background-color: #FFF;
   padding-top: 20px;
-  padding-left: 50px;
+  padding-left: 20px;
   border-radius: 20px;
-  align-self: center;
-  align-items: center;
+  overflow-x: auto;
+  scroll-behavior: 
+ 
 `;
 
 export const CarrouselContainer = styled.div`
