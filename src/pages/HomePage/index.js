@@ -10,7 +10,7 @@ import {XYPlot,
         YAxis,
         Hint
       } from 'react-vis';
-import {format} from 'date-fns';
+import {format, parseISO} from 'date-fns';
 import pt from 'date-fns/locale/pt';
 import Ws from '@adonisjs/websocket-client';
 import { AiOutlineConsoleSql } from 'react-icons/ai';
@@ -110,8 +110,8 @@ function rememberValue (aux_value) {
         <div style={{display: 'flex', flexDirection: 'column', width: '100%'}}>
         
         <DadosContainer>
-          <h1>{format(new Date(), "dd'/'MM'/'yyyy")}</h1>
-          <h2>Consumo: {value} m³</h2>
+          <h2>{format(new Date(), "dd'/'MM'/'yyyy")}</h2>
+          <h3>Consumo: {value} m³</h3>
         </DadosContainer>   
 
         <GraficoContainer>
@@ -119,7 +119,7 @@ function rememberValue (aux_value) {
               <VerticalGridLines />
               <HorizontalGridLines />
              
-              <XAxis tickTotal={10} tickFormat={ (d)=>{return format(new Date(d), "HH':'mm")}} tickLabelAngle={-45} />
+              <XAxis tickTotal={10} tickFormat={ (d)=>{return format( new Date(d), "HH':'mm")}} tickLabelAngle={-45} />
               <YAxis tickFormat={ (d)=>{ return `${d} m³`}} />
               <LineMarkSeries 
                 style={{}}

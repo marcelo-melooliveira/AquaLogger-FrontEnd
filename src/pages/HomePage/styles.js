@@ -27,7 +27,7 @@ export const DadosContainer = styled.div`
   padding-right: 10px;
   border-radius: 10px;
 
-  h1 {
+  h3 {
     align-self: center;
   };
 
