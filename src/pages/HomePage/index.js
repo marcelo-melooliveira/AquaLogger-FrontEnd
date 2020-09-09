@@ -10,16 +10,17 @@ import {XYPlot,
         YAxis,
         Hint
       } from 'react-vis';
+import { Digital } from 'react-activity';
+import 'react-activity/dist/react-activity.css';
 import {format, parseISO} from 'date-fns';
 import pt from 'date-fns/locale/pt';
 import Ws from '@adonisjs/websocket-client';
 import { AiOutlineConsoleSql } from 'react-icons/ai';
 import api from '../../services/api'
 import HeaderBar from '../../components/HeaderBar';
-import { GraficoContainer, DadosContainer} from './styles';
+import { GraficoContainer, DadosContainer, LoadContainer} from './styles';
 import '../../../node_modules/react-vis/dist/style.css';
 
-const ws = Ws('ws://localhost:3333').connect();
 
 function HomePage() {
  
@@ -27,6 +28,7 @@ function HomePage() {
   const [dadosPrimarios, setDadosPrimarios] = useState([]);
   const [data_grafico, setDataGrafico] = useState([]);
   const [value, setValue] = useState([]);
+  const [load, setLoad] = useState(true);
   
   
 
@@ -39,9 +41,10 @@ function HomePage() {
         for(let i=0; i<dados.length; i+=1){
           aux_dados.push({y: dados[i].consumo, x: Date.parse(dados[i].data_criacao)})
         }
-         console.log(aux_dados)
+        // console.log(aux_dados)
       setDataGrafico(aux_dados);
       setValue(dados[dados.length- 1].consumo);
+      setLoad(false);
       
     }
   }
@@ -60,6 +63,7 @@ async function data_fetch(){
 
 
 useEffect(() => {
+  const ws = Ws('ws://localhost:3333').connect();
   const socket_consumo = ws.subscribe('consumo');
   ws.on('open', ()=>{// alert('entrou no websocket');
  })
@@ -115,6 +119,7 @@ function rememberValue (aux_value) {
         </DadosContainer>   
 
         <GraficoContainer>
+        {load ? (<LoadContainer><Digital color='#9F81F7' size={40} /></LoadContainer>) : 
             <XYPlot height={350} width={(data_grafico.length*20) + 350} margin={{ left:75}} style={{overflowX:'auto'}}>
               <VerticalGridLines />
               <HorizontalGridLines />
@@ -132,6 +137,7 @@ function rememberValue (aux_value) {
               {// value ? <Hint value={value} /> : null
             }
            </XYPlot>
+          }
         </GraficoContainer>
         </div>
       </ParallaxLayer>

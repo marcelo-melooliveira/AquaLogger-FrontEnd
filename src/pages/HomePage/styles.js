@@ -41,6 +41,7 @@ export const DadosContainer = styled.div`
 export const GraficoContainer = styled.div`
   display: flex;
   width: 96%;
+  align-self: center;
   background-color: #FFF;
   padding-top: 20px;
   padding-left: 20px;
@@ -85,3 +86,19 @@ export const TextContainer = styled.div`
   border-bottom-right-radius: 20px;
   padding: 10px;
 `;
+
+export const LoadContainer = styled.div`
+  height:350px;
+  width: 1200px;
+  justify-content:center;
+  align-items:center;
+  display: flex;
+  
+
+  strong {
+      color: #fff;
+      font-size: 20px;
+      margin: 0 15px;
+      font-weight:bold;
+    }
+  ;`
