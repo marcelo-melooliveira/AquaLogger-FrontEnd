@@ -33,26 +33,26 @@ function ConsumoMensal() {
 
 
   function formata_dados(dados){
-    if(dados){
-      // console.tron.log('entrou no if do formata dados!')
-      // console.tron.log(dados)
-     
-        const aux_dados = [{y: 0, x:'Janeiro'},{y: 0, x:'Fevereiro'},{y: 0, x:'Março'},{y: 0, x:'Abril'},{y: 0, x:'Maio'},{y: 0, x:'Junho'},{y: 0, x:'Julho'},{y: 0, x:'Agosto'},{y: 0, x:'Setembro'},{y: 0, x:'Outubro'},{y: 0, x:'Novembro'},{y: 0, x:'Dezembro'}];
-
+    const aux_dados = [{y: 0, x:'Janeiro'},{y: 0, x:'Fevereiro'},{y: 0, x:'Março'},{y: 0, x:'Abril'},{y: 0, x:'Maio'},{y: 0, x:'Junho'},{y: 0, x:'Julho'},{y: 0, x:'Agosto'},{y: 0, x:'Setembro'},{y: 0, x:'Outubro'},{y: 0, x:'Novembro'},{y: 0, x:'Dezembro'}];
+       
+    if(dados){     
         for(let i=0; i<dados.length; i+=1){
-          if(i === dados.length - 1){
-            aux_dados[getMonth(parseISO(dados[i].data_criacao))].y = dados[i].consumo;
-            setConsumoFinal(dados[i].consumo);
-          } else if( getMonth(parseISO(dados[i].data_criacao)) !== getMonth(parseISO(dados[i+1].data_criacao)) ){
-            aux_dados[getMonth(parseISO(dados[i].data_criacao))].y = dados[i].consumo;
-             }
+           aux_dados[dados[i].mes].y = dados[i].consumo;
         }
-      console.tron.log(aux_dados);
+    }
+        // for(let i=0; i<dados.length; i+=1){
+        //   if(i === dados.length - 1){
+        //     aux_dados[getMonth(parseISO(dados[i].data_criacao))].y = dados[i].consumo;
+        //     setConsumoFinal(dados[i].consumo);
+        //   } else if( getMonth(parseISO(dados[i].data_criacao)) !== getMonth(parseISO(dados[i+1].data_criacao)) ){
+        //     aux_dados[getMonth(parseISO(dados[i].data_criacao))].y = dados[i].consumo;
+        //      }
+        // }
+     // console.tron.log(aux_dados);
       setDataGrafico(aux_dados);
+      setConsumoFinal(dados[dados.length- 1].consumo);
       setValue(dados[dados.length- 1].consumo);
       setLoad(false);
-      
-    }
   }
 
 async function data_fetch(){

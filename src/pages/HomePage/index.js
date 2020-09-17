@@ -34,16 +34,18 @@ function HomePage() {
 
 
   function formata_dados(dados){
+    let soma_consumo = 0;
     if(dados){
       console.tron.log('entrou no if do formata dados!')
       console.tron.log(dados)
         const aux_dados = [];
         for(let i=0; i<dados.length; i+=1){
-          aux_dados.push({y: dados[i].consumo, x: Date.parse(dados[i].data_criacao)})
+          soma_consumo += dados[i].consumo;
+          aux_dados.push({y: soma_consumo, x: Date.parse(dados[i].data_criacao)})
         }
         // console.log(aux_dados)
       setDataGrafico(aux_dados);
-      setValue(dados[dados.length- 1].consumo);
+      setValue(soma_consumo.toFixed(2));
       setLoad(false);
       
     }
@@ -90,12 +92,12 @@ useEffect(() => {
 
 function forgetValue () {
  const { y } = data_grafico[data_grafico.length - 1];
-  setValue(y);
+  setValue(y.toFixed(2));
 };
 
 function rememberValue (aux_value) {
    const { y } = aux_value
-   setValue(y); 
+   setValue(y.toFixed(2)); 
 };
 
   let parallax = null;

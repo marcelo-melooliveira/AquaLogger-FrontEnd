@@ -47,7 +47,6 @@ export const GraficoContainer = styled.div`
   padding-left: 20px;
   border-radius: 20px;
   overflow-x: auto;
-  scroll-behavior: 
  
 `;
 

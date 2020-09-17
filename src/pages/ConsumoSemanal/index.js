@@ -33,27 +33,26 @@ function ConsumoSemanal() {
 
 
   function formata_dados(dados){
+    const aux_dados = [{y: 0, x:'Domingo'},{y: 0, x:'Segunda-Feira'},{y: 0, x:'Terça-Feira'},{y: 0, x:'Quarta-Feira'},{y: 0, x:'Quinta-Feira'},{y: 0, x:'Sexta-Feira'},{y: 0, x:'Sábado'}];    
     if(dados){
-      // console.tron.log('entrou no if do formata dados!')
-      // console.tron.log(dados)
-     
-        const aux_dados = [{y: 0, x:'Domingo'},{y: 0, x:'Segunda-Feira'},{y: 0, x:'Terça-Feira'},{y: 0, x:'Quarta-Feira'},{y: 0, x:'Quinta-Feira'},{y: 0, x:'Sexta-Feira'},{y: 0, x:'Sábado'},];
-        
         for(let i=0; i<dados.length; i+=1){
-          if(i === dados.length - 1){
-            aux_dados[getDay(parseISO(dados[i].data_criacao))].y = dados[i].consumo;
-            setConsumoFinal(dados[i].consumo);
-          } else if( getDay(parseISO(dados[i].data_criacao)) !== getDay(parseISO(dados[i+1].data_criacao)) ){
-            aux_dados[getDay(parseISO(dados[i].data_criacao))].y = dados[i].consumo;
+          aux_dados[dados[i].dia_semana].y = dados[i].consumo;
              }
         }
+        // for(let i=0; i<dados.length; i+=1){
+        //   if(i === dados.length - 1){
+        //     aux_dados[getDay(parseISO(dados[i].data_criacao))].y = dados[i].consumo;
+        //     setConsumoFinal(dados[i].consumo);
+        //   } else if( getDay(parseISO(dados[i].data_criacao)) !== getDay(parseISO(dados[i+1].data_criacao)) ){
+        //     aux_dados[getDay(parseISO(dados[i].data_criacao))].y = dados[i].consumo;
+        //      }
+        // }
       // console.tron.log(aux_dados);
       setDataGrafico(aux_dados);
+      setConsumoFinal(dados[dados.length- 1].consumo);
       setValue(dados[dados.length- 1].consumo);
       setLoad(false);
       
-      
-    }
   }
 
 async function data_fetch(){

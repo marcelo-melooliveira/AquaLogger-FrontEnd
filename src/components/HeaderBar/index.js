@@ -14,7 +14,7 @@ export default function HeaderBar() {
   return (
     <div className='container-fluid p-0 fixed-top'>
     <nav className='navbar navbar-expand-md navbar-dark bg-light'>
-    <img style={{width:149, height:50}} className='nav-brand' src={logo} alt="GoBarber" />
+    <img style={{width:159, height:50}} className='nav-brand' src={logo} alt="GoBarber" />
     <button style={{outline: 'none'}} className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarMainToggler"
             aria-controls="navbarMainToggler" aria-expanded="false" aria-label="Toggle navigation">
             <span className="navbar-toggler-icon "/>

@@ -46,9 +46,7 @@ export const GraficoContainer = styled.div`
   padding-top: 20px;
   padding-left: 20px;
   border-radius: 20px;
-  overflow-x: auto;
-  scroll-behavior: 
- 
+  overflow-x: auto; 
 `;
 
 export const CarrouselContainer = styled.div`
