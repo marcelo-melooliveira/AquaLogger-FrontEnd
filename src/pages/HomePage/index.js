@@ -65,7 +65,7 @@ async function data_fetch(){
 
 
 useEffect(() => {
-  const ws = Ws('ws://localhost:3333').connect();
+  const ws = Ws('ws://mellus.com.br').connect();
   const socket_consumo = ws.subscribe('consumo');
   ws.on('open', ()=>{// alert('entrou no websocket');
  })
