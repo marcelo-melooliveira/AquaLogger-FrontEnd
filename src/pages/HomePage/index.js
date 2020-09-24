@@ -36,8 +36,9 @@ function HomePage() {
   function formata_dados(dados){
     let soma_consumo = 0;
     if(dados){
-      console.tron.log('entrou no if do formata dados!')
-      console.tron.log(dados)
+      console.log('*** entrou no if do formata dados');
+      // console.tron.log('entrou no if do formata dados!')
+      // console.tron.log(dados)
         const aux_dados = [];
         for(let i=0; i<dados.length; i+=1){
           soma_consumo += dados[i].consumo;
@@ -56,8 +57,12 @@ async function data_fetch(){
     const res = await api.get('consumo-diario',{
       params : { date: aux_date }
     });
+    console.log('*** data fetch');
+    console.log(res.data);
     if(res.data){
       formata_dados(res.data);
+    }else{
+      alert('Erro ao carregar os dados!')
     }
   }
 
@@ -65,7 +70,7 @@ async function data_fetch(){
 
 
 useEffect(() => {
-  const ws = Ws('ws://mellus.com.br').connect();
+  const ws = Ws('ws://mellus.com.br:3333').connect();
   const socket_consumo = ws.subscribe('consumo');
   ws.on('open', ()=>{// alert('entrou no websocket');
  })
