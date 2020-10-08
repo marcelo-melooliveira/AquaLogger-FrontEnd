@@ -44,7 +44,7 @@ function HomePage() {
           soma_consumo += dados[i].consumo;
           aux_dados.push({y: soma_consumo, x: Date.parse(dados[i].data_criacao)})
         }
-        // console.log(aux_dados)
+         console.log(aux_dados)
       setDataGrafico(aux_dados);
       setValue(soma_consumo.toFixed(2));
       setLoad(false);
@@ -131,7 +131,7 @@ function rememberValue (aux_value) {
               <VerticalGridLines />
               <HorizontalGridLines />
              
-              <XAxis tickTotal={10} tickFormat={ (d)=>{return format( new Date(d), "HH':'mm")}} tickLabelAngle={-45} />
+              <XAxis tickTotal={25} tickFormat={ (d)=>{ return format( new Date(d + 10800000), "HH':'mm")}} tickLabelAngle={-45} />
               <YAxis tickFormat={ (d)=>{ return `${d} m³`}} />
               <LineMarkSeries 
                 style={{}}
