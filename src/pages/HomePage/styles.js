@@ -100,3 +100,62 @@ export const LoadContainer = styled.div`
       font-weight:bold;
     }
   ;`
+
+export const InputContainer = styled.div`
+display: flex;
+height:200px;
+width:250px;
+flex-direction: column;
+justify-content: center;
+align-items: center;
+align-self: center;
+background-color: #F2F2F2;
+border-radius: 10px;
+`;
+
+export const CustomInput = styled.button`
+display: flex;
+padding: 5px;
+border-radius: 10px;
+background-color: #0B0B61;
+h3 {
+    align-self: center;
+    color: #FFF;
+  };
+`;
+
+export const DownloadContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 50px;
+  border-radius: 25px;
+  background-color: #FFF;
+
+  button {
+    
+    outline:none;
+  }
+`;
+export const ButtonDownload = styled.button`
+ display: flex;
+  height:80px;
+  width:410px;
+  justify-content: center;
+  align-items: center;
+  color: #FFF;
+  background-color: #0B0B61;
+  border-radius:10px;
+  margin-top: 15px;
+  border: none;
+  outline:none;
+  transition: background 0.2s;
+
+  &:hover {
+        background: ${darken(0.08, '#3b9eff')};
+      }
+h3 {
+    align-self: center;
+    color: #FFF;
+  };
+`;

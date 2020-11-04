@@ -15,12 +15,23 @@ import 'react-activity/dist/react-activity.css';
 import {format, parseISO} from 'date-fns';
 import pt from 'date-fns/locale/pt';
 import Ws from '@adonisjs/websocket-client';
-import { AiOutlineConsoleSql } from 'react-icons/ai';
+import { FiCalendar } from 'react-icons/fi';
+import DatePicker, {registerLocale} from "react-datepicker";
 import api from '../../services/api'
 import HeaderBar from '../../components/HeaderBar';
-import { GraficoContainer, DadosContainer, LoadContainer} from './styles';
+import { GraficoContainer,
+        DadosContainer,
+        LoadContainer,
+        InputContainer,
+        CustomInput,
+        DownloadContainer,
+        ButtonDownload
+      } from './styles';
 import '../../../node_modules/react-vis/dist/style.css';
+import "react-datepicker/dist/react-datepicker.css";
+import { buttons } from 'polished';
 
+registerLocale('pt', pt)
 
 function HomePage() {
  
@@ -29,8 +40,14 @@ function HomePage() {
   const [data_grafico, setDataGrafico] = useState([]);
   const [value, setValue] = useState([]);
   const [load, setLoad] = useState(true);
+  const [startDate, setStartDate] = useState(new Date());
+  const [finalDate, setFinalDate] = useState(new Date());
   
-  
+  const ExampleCustomInput = ({ value, onClick }) => (
+    <CustomInput onClick={onClick}>
+      <h3>{value}</h3>
+    </CustomInput>
+  );
 
 
   function formata_dados(dados){
@@ -68,7 +85,7 @@ async function data_fetch(){
 
   
 
-
+/*
 useEffect(() => {
   const ws = Ws('ws://mellus.com.br:3333').connect();
   const socket_consumo = ws.subscribe('consumo');
@@ -92,7 +109,7 @@ useEffect(() => {
    // monta_dados_grafico();
 }, [])
 
-
+*/
 
 
 function forgetValue () {
@@ -148,6 +165,49 @@ function rememberValue (aux_value) {
         </GraficoContainer>
         </div>
       </ParallaxLayer>
+
+      <ParallaxLayer
+      offset={1}
+      speed={0}
+      style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column'}}>
+     <DownloadContainer>
+     <h3>Download CSV</h3>
+      <div style={{display:'flex', flexDirection:'row', padding: 10}}>
+          <InputContainer>
+          <h3>Data Inicial</h3>
+          <div style={{display: 'flex'}}>
+          <FiCalendar size={18} color="#0B0B61" />
+          <DatePicker
+          selected={startDate}
+          popperPlacement="top-start"
+          onChange={date => {alert(date);setStartDate(date)}}
+          dateFormat='dd/MM/yyyy'
+          locale="pt"
+          />
+        </div>
+          </InputContainer>
+              <div style={{padding:10}}/>
+          <InputContainer>
+          <h3>Data Final</h3>
+          <div style={{display: 'flex'}}>
+            <FiCalendar size={18} color="#0B0B61" />
+            <DatePicker
+            selected={finalDate}
+            popperPlacement="top-start"
+            onChange={date => {alert(date);setFinalDate(date)}}
+            dateFormat='dd/MM/yyyy'
+            locale="pt"
+            />
+          </div>
+          
+          </InputContainer>
+      </div>    
+          <ButtonDownload>
+              <h3>Download</h3>
+          </ButtonDownload>  
+      </DownloadContainer>   
+     </ParallaxLayer>
+     
   </Parallax>
     
   );

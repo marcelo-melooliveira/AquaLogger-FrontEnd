@@ -15,10 +15,20 @@ import pt from 'date-fns/locale/pt';
 import Ws from '@adonisjs/websocket-client';
 import { Digital } from 'react-activity';
 import 'react-activity/dist/react-activity.css';
+import { FiCalendar } from 'react-icons/fi';
+import DatePicker, {registerLocale} from "react-datepicker";
 import api from '../../services/api'
 import HeaderBar from '../../components/HeaderBar';
-import { GraficoContainer, DadosContainer, LoadContainer} from './styles';
+import { GraficoContainer,
+         DadosContainer,
+         LoadContainer,
+         DownloadContainer,
+         ButtonDownload,
+         InputContainer,
+         CustomInput
+        } from './styles';
 import '../../../node_modules/react-vis/dist/style.css';
+import "react-datepicker/dist/react-datepicker.css";
 
 
 function ConsumoMensal() {
@@ -27,7 +37,9 @@ function ConsumoMensal() {
   const [consumoFinal, setConsumoFinal] = useState();
   const [data_grafico, setDataGrafico] = useState([]);
   const [value, setValue] = useState([]);
-  const [load, setLoad] = useState(true)
+  const [load, setLoad] = useState(true);
+  const [startDate, setStartDate] = useState(new Date());
+  const [finalDate, setFinalDate] = useState(new Date());
   
   
 
@@ -145,6 +157,51 @@ function rememberValue (aux_value) {
         </GraficoContainer>
         </div>
       </ParallaxLayer>
+
+      <ParallaxLayer
+      offset={1}
+      speed={0}
+      style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column'}}>
+     <DownloadContainer>
+     <h3>Download CSV</h3>
+      <div style={{display:'flex', flexDirection:'row', padding: 10}}>
+          <InputContainer>
+          <h3>Data Inicial</h3>
+          <div style={{display: 'flex'}}>
+          <FiCalendar size={18} color="#0B0B61" />
+          <DatePicker
+          selected={startDate}
+          popperPlacement="top-start"
+          onChange={date => {alert(date);setStartDate(date)}}
+          dateFormat="MM/yyyy"
+          showMonthYearPicker
+          locale="pt"
+          />
+        </div>
+          </InputContainer>
+              <div style={{padding:10}}/>
+          <InputContainer>
+          <h3>Data Final</h3>
+          <div style={{display: 'flex'}}>
+            <FiCalendar size={18} color="#0B0B61" />
+            <DatePicker
+            selected={finalDate}
+            popperPlacement="top-start"
+            onChange={date => {alert(date);setFinalDate(date)}}
+            dateFormat="MM/yyyy"
+            showMonthYearPicker
+            locale="pt"
+            />
+          </div>
+          
+          </InputContainer>
+      </div>    
+          <ButtonDownload>
+              <h3>Download</h3>
+          </ButtonDownload>  
+      </DownloadContainer>   
+     </ParallaxLayer>
+
   </Parallax>
     
   );
