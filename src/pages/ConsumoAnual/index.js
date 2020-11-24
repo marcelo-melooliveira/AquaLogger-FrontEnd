@@ -10,7 +10,8 @@ import {XYPlot,
         YAxis,
         Hint
       } from 'react-vis';
-import {format, parseISO, getMonth} from 'date-fns';
+import {format, parseISO, addHours} from 'date-fns';
+import isBefore from 'date-fns/isBefore'
 import pt from 'date-fns/locale/pt';
 import Ws from '@adonisjs/websocket-client';
 import { Digital } from 'react-activity';
@@ -40,8 +41,7 @@ function ConsumoAnual() {
   const [load, setLoad] = useState(true);
   const [startDate, setStartDate] = useState(new Date());
   const [finalDate, setFinalDate] = useState(new Date());
-  
-  
+  const [loadDownload, setLoadDownload] = useState(false);
 
 
   function formata_dados(dados){
@@ -116,12 +116,58 @@ function rememberValue (aux_value) {
    setValue(y); 
 };
 
-let parallax = null;
+
+
+function download_csv(dados) {
+  
+    let csv = 'Consumo(m3);Ano;DataDeCriacao\n';
+    dados.forEach( (row) => {
+           // csv += row.join(';');
+           csv += `${row.consumo};${row.ano};${format(addHours(parseISO(row.data_criacao), 3), "dd'/'MM'/'yyyy'")}`;
+            csv += "\n";
+    });
+    setLoadDownload(false);
+    // console.log(csv);
+    const hiddenElement = document.createElement('a');
+    hiddenElement.href = `data:text/csv;charset=utf-8,${  encodeURI(csv)}`;
+    hiddenElement.target = '_blank';
+    hiddenElement.download = 'download-consumo-anual.csv';
+    hiddenElement.click();
+  }
+  
+  
+  async function fetch_download_csv() {
+    const is_before = isBefore(startDate, finalDate)
+    if(!is_before){
+      alert('A "Data Inicial" deve ser anterior e diferente ao da "Data Final"!');
+      return
+    }
+    setLoadDownload(true);
+  const inicial_fomated = format(startDate, "yyyy'-'MM'-'dd");
+  const final_fomated = format(finalDate, "yyyy'-'MM'-'dd");
+  // alert(`${inicial_fomated} e ${final_fomated}`)
+  
+  const res = await api.get('download-anual',{
+    params : { data_ref_inicial: inicial_fomated,
+               data_ref_final: final_fomated
+     }
+  });
+  if(res.data.length === 0){
+    setLoadDownload(false);
+    alert('Nenhum dado foi encontrado no intervalo de tempo')
+  }else{
+    // console.log(res.data);
+    download_csv(res.data);
+  }
+  
+  }
+  
+
 const url = (name, wrap = false) => `${wrap ? 'url(' : ''}https://awv3node-homepage.surge.sh/build/assets/${name}.svg${wrap ? ')' : ''}`
 return (
 
-  <Parallax ref={ref => (parallax = ref)} pages={2}>
-  <ParallaxLayer offset={0} speed={0} factor={3} style={{ backgroundImage: url('stars', true), backgroundSize: 'cover' }}/>
+  <Parallax  pages={2}>
+  <ParallaxLayer offset={0} speed={0} factor={3} style={{ backgroundImage: url('starss', true), backgroundSize: 'cover' }}/>
 
     <ParallaxLayer
       offset={0}
@@ -175,7 +221,7 @@ return (
           <DatePicker
           selected={startDate}
           popperPlacement="top-start"
-          onChange={date => {alert(date);setStartDate(date)}}
+          onChange={date => {setStartDate(date)}}
           showYearPicker
           dateFormat="yyyy"
           locale="pt"
@@ -190,7 +236,7 @@ return (
             <DatePicker
             selected={finalDate}
             popperPlacement="top-start"
-            onChange={date => {alert(date);setFinalDate(date)}}
+            onChange={date => {setFinalDate(date)}}
             showYearPicker
             dateFormat="yyyy"
             locale="pt"
@@ -199,9 +245,13 @@ return (
           
           </InputContainer>
       </div>    
-          <ButtonDownload>
-              <h3>Download</h3>
-          </ButtonDownload>  
+      <ButtonDownload onClick={()=> {fetch_download_csv()}}>
+      {loadDownload ? (<LoadContainer><Digital color='#FFF' size={20} />
+      <h3>Buscando</h3>
+      </LoadContainer>) :
+          <h1>Download</h1>
+    }
+      </ButtonDownload> 
       </DownloadContainer>   
      </ParallaxLayer>
 

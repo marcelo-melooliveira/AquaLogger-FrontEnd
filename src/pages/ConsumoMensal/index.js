@@ -10,7 +10,8 @@ import {XYPlot,
         YAxis,
         Hint
       } from 'react-vis';
-import {format, parseISO, getMonth} from 'date-fns';
+import {format, parseISO, addHours} from 'date-fns';
+import isBefore from 'date-fns/isBefore'
 import pt from 'date-fns/locale/pt';
 import Ws from '@adonisjs/websocket-client';
 import { Digital } from 'react-activity';
@@ -40,6 +41,7 @@ function ConsumoMensal() {
   const [load, setLoad] = useState(true);
   const [startDate, setStartDate] = useState(new Date());
   const [finalDate, setFinalDate] = useState(new Date());
+  const [loadDownload, setLoadDownload] = useState(false);
   
   
 
@@ -112,6 +114,57 @@ function rememberValue (aux_value) {
    setValue(y); 
 };
 
+
+function download_csv(dados) {
+  //   const dados = [
+  //     ['Marcelo', 'Quixadá'],
+  //     ['Cadmiel', 'Oiticica'],
+  //     ['Tales', 'Pedra e cal']
+  //  ];
+  
+    let csv = 'Consumo(m3);Mes;DataDeCriacao\n';
+    dados.forEach( (row) => {
+           // csv += row.join(';');
+           csv += `${row.consumo};${row.mes + 1};${format(addHours(parseISO(row.data_criacao), 3), "dd'/'MM'/'yyyy'")}`;
+            csv += "\n";
+    });
+    setLoadDownload(false);
+     // console.log(csv);
+    const hiddenElement = document.createElement('a');
+    hiddenElement.href = `data:text/csv;charset=utf-8,${  encodeURI(csv)}`;
+    hiddenElement.target = '_blank';
+    hiddenElement.download = 'download-consumo-mensal.csv';
+    hiddenElement.click();
+  }
+  
+  
+  async function fetch_download_csv() {
+    const is_before = isBefore(startDate, finalDate)
+    if(!is_before){
+      alert('A "Data Inicial" deve ser anterior e diferente ao da "Data Final"!');
+      return
+    }
+    setLoadDownload(true);
+  const inicial_fomated = format(startDate, "yyyy'-'MM'-'dd");
+  const final_fomated = format(finalDate, "yyyy'-'MM'-'dd");
+  // alert(`${inicial_fomated} e ${final_fomated}`)
+  
+  const res = await api.get('download-mensal',{
+    params : { data_ref_inicial: inicial_fomated,
+               data_ref_final: final_fomated
+     }
+  });
+  if(res.data.length === 0){
+    setLoadDownload(false);
+    alert('Nenhum dado foi encontrado no intervalo de tempo')
+  }else{
+    // console.log(res.data);
+    download_csv(res.data);
+  }
+  
+  
+  }
+
   let parallax = null;
   const url = (name, wrap = false) => `${wrap ? 'url(' : ''}https://awv3node-homepage.surge.sh/build/assets/${name}.svg${wrap ? ')' : ''}`
   return (
@@ -172,7 +225,7 @@ function rememberValue (aux_value) {
           <DatePicker
           selected={startDate}
           popperPlacement="top-start"
-          onChange={date => {alert(date);setStartDate(date)}}
+          onChange={date => {setStartDate(date)}}
           dateFormat="MM/yyyy"
           showMonthYearPicker
           locale="pt"
@@ -187,7 +240,7 @@ function rememberValue (aux_value) {
             <DatePicker
             selected={finalDate}
             popperPlacement="top-start"
-            onChange={date => {alert(date);setFinalDate(date)}}
+            onChange={date => {setFinalDate(date)}}
             dateFormat="MM/yyyy"
             showMonthYearPicker
             locale="pt"
@@ -196,9 +249,13 @@ function rememberValue (aux_value) {
           
           </InputContainer>
       </div>    
-          <ButtonDownload>
-              <h3>Download</h3>
-          </ButtonDownload>  
+      <ButtonDownload onClick={()=> {fetch_download_csv()}}>
+      {loadDownload ? (<LoadContainer><Digital color='#FFF' size={20} />
+      <h3>Buscando</h3>
+      </LoadContainer>) :
+          <h1>Download</h1>
+    }
+      </ButtonDownload>  
       </DownloadContainer>   
      </ParallaxLayer>
 

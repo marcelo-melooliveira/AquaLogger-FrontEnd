@@ -12,7 +12,8 @@ import {XYPlot,
       } from 'react-vis';
 import { Digital } from 'react-activity';
 import 'react-activity/dist/react-activity.css';
-import {format, parseISO} from 'date-fns';
+import {format, parseISO, startOfDay, endOfDay, addHours} from 'date-fns';
+import isBefore from 'date-fns/isBefore'
 import pt from 'date-fns/locale/pt';
 import Ws from '@adonisjs/websocket-client';
 import { FiCalendar } from 'react-icons/fi';
@@ -29,7 +30,7 @@ import { GraficoContainer,
       } from './styles';
 import '../../../node_modules/react-vis/dist/style.css';
 import "react-datepicker/dist/react-datepicker.css";
-import { buttons } from 'polished';
+
 
 registerLocale('pt', pt)
 
@@ -42,12 +43,8 @@ function HomePage() {
   const [load, setLoad] = useState(true);
   const [startDate, setStartDate] = useState(new Date());
   const [finalDate, setFinalDate] = useState(new Date());
+  const [loadDownload, setLoadDownload] = useState(false);
   
-  const ExampleCustomInput = ({ value, onClick }) => (
-    <CustomInput onClick={onClick}>
-      <h3>{value}</h3>
-    </CustomInput>
-  );
 
 
   function formata_dados(dados){
@@ -85,9 +82,11 @@ async function data_fetch(){
 
   
 
-/*
+
 useEffect(() => {
-  const ws = Ws('ws://mellus.com.br:3333').connect();
+  
+  // const ws = Ws('ws://mellus.com.br:3333').connect();
+  const ws = Ws('ws://172.16.0.91:3333').connect();
   const socket_consumo = ws.subscribe('consumo');
   ws.on('open', ()=>{// alert('entrou no websocket');
  })
@@ -109,7 +108,7 @@ useEffect(() => {
    // monta_dados_grafico();
 }, [])
 
-*/
+
 
 
 function forgetValue () {
@@ -121,6 +120,57 @@ function rememberValue (aux_value) {
    const { y } = aux_value
    setValue(y.toFixed(2)); 
 };
+
+function download_csv(dados) {
+//   const dados = [
+//     ['Marcelo', 'Quixadá'],
+//     ['Cadmiel', 'Oiticica'],
+//     ['Tales', 'Pedra e cal']
+//  ];
+
+  let csv = 'Consumo(m3);Data;Hora\n';
+  dados.forEach( (row) => {
+         // csv += row.join(';');
+         csv += `${row.consumo};${format(addHours(parseISO(row.data_criacao), 3), "dd'/'MM'/'yyyy';'HH':'mm")}`;
+          csv += "\n";
+  });
+  setLoadDownload(false);
+   // console.log(csv);
+  const hiddenElement = document.createElement('a');
+  hiddenElement.href = `data:text/csv;charset=utf-8,${encodeURI(csv)}`;
+  hiddenElement.target = '_blank';
+  hiddenElement.download = 'download-consumo.csv';
+  hiddenElement.click();
+}
+
+
+async function fetch_download_csv() {
+  const is_before = isBefore(startOfDay(startDate), endOfDay(finalDate))
+  if(!is_before){
+    alert('A "Data Inicial" deve ser anterior e diferente ao da "Data Final"!');
+    return
+  }
+  setLoadDownload(true);
+const inicial_fomated = format(startDate, "yyyy'-'MM'-'dd");
+const final_fomated = format(finalDate, "yyyy'-'MM'-'dd");
+// alert(`${inicial_fomated} e ${final_fomated}`)
+
+const res = await api.get('download-diario',{
+  params : { data_ref_inicial: inicial_fomated,
+             data_ref_final: final_fomated
+   }
+});
+if(res.data.length === 0){
+  setLoadDownload(false);
+  alert('Nenhum dado foi encontrado no intervalo de tempo')
+}else{
+  // console.log(res.data)
+  download_csv(res.data);
+}
+
+
+}
+
 
   let parallax = null;
   const url = (name, wrap = false) => `${wrap ? 'url(' : ''}https://awv3node-homepage.surge.sh/build/assets/${name}.svg${wrap ? ')' : ''}`
@@ -180,7 +230,7 @@ function rememberValue (aux_value) {
           <DatePicker
           selected={startDate}
           popperPlacement="top-start"
-          onChange={date => {alert(date);setStartDate(date)}}
+          onChange={date => {setStartDate(date)}}
           dateFormat='dd/MM/yyyy'
           locale="pt"
           />
@@ -202,8 +252,12 @@ function rememberValue (aux_value) {
           
           </InputContainer>
       </div>    
-          <ButtonDownload>
-              <h3>Download</h3>
+          <ButtonDownload onClick={()=> {fetch_download_csv()}}>
+          {loadDownload ? (<LoadContainer><Digital color='#FFF' size={20} />
+          <h3>Buscando</h3>
+          </LoadContainer>) :
+              <h1>Download</h1>
+        }
           </ButtonDownload>  
       </DownloadContainer>   
      </ParallaxLayer>

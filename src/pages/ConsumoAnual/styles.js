@@ -91,6 +91,7 @@ export const LoadContainer = styled.div`
   justify-content:center;
   align-items:center;
   display: flex;
+  flex-direction: column;
   
 
   strong {
